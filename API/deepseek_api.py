@@ -2,13 +2,27 @@ import json
 
 import requests
 
+import config
 
-class SpaceWorldAGI:
+
+class SantaMariaAI:
     """
     Класс Api для удобной работы с DeepSeek
     """
 
-    def __init__(self, *, api_key: str, system_prompt: str = "") -> None:
+    def __new__(cls, *args, **kwargs):
+        """
+        Контролирует Инициализацию класса
+        :param args:
+        :param kwargs:
+        """
+        if 'api_key' not in kwargs:
+            raise ValueError("The Api key cannot be empty")
+        if "system_prompt" not in kwargs:
+            kwargs["system_prompt"] = ''
+        return super().__new__(cls)
+
+    def __init__(self, *, api_key: str, system_prompt='') -> None:
         if api_key is None:
             raise ValueError("The Api key cannot be empty")
         self.API_KEY = api_key
@@ -19,7 +33,7 @@ class SpaceWorldAGI:
             "Content-Type": "application/json"
         }
 
-    def run(self, prompt: str):
+    def run(self, prompt: str) -> str:
         """
         Выполняет Запрос
         :param prompt:
@@ -50,10 +64,14 @@ class SpaceWorldAGI:
                         if "choices" in chunk_json:
                             content = chunk_json["choices"][0]["delta"].get("content", "")
                             if content:
+                                print(content, end='', flush=True)
                                 full_response.append(content)
                     except json.decoder.JSONDecodeError:
                         pass
                     except Exception as error:
                         print(error)
             self.messages.append({'role': 'assistant', 'content': ''.join(full_response)})
-            return "".join(full_response)
+            return ''.join(full_response)
+
+
+
