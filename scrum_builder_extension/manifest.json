@@ -1,12 +1,29 @@
 {
-    "name": "Scrum Builder",
-    "description": "Create scrum sprint from google meet conversation",
-    "version": "1.0",
-    "manifest_version": 3,
-    "icons": {},
-    "action": {
-        "default_popup":"popup.html"
-    },
-    "permissions": [],
-    "background":{}
+  "name": "Image Grabber",
+  "description": "Extract all images from current web page",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "popup.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": [
+    "tabs",
+    "activeTab"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  }
 }
