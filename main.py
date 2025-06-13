@@ -7,9 +7,13 @@ if __name__ == "__main__":
     app = FastAPI()
 
 
+    @app.get("/leave")
+    def get_conversation():
+        return app.google_meet_api.bot_leave()
+
     @app.get("/join")
     def get_conversation():
-        return app.google_meet_api.preset_dialog()
+        return app.google_meet_api.bot_join()
 
 
     @app.get("/conversation")
@@ -17,10 +21,10 @@ if __name__ == "__main__":
         return app.google_meet_api.preset_dialog()
 
 
-    @app.get("/start")
-    def start():
+    @app.post("/start/")
+    def start(call_id: str):
         try:
-            app.google_meet_api = GoogleMeetApi(API_KEY=config.VEXA_API_KEY, call_id="qnq-okpa-vsz")
+            app.google_meet_api: GoogleMeetApi = GoogleMeetApi(API_KEY=config.VEXA_API_KEY, call_id=call_id")
             return True
         except Exception as e:
             print(e)
