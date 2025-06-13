@@ -3,6 +3,7 @@
   "description": "Extract all images from current web page",
   "version": "1.0",
   "manifest_version": 3,
+  "devtools_page": "devtools.html",
   "action": {
     "default_popup": "popup.html"
   },

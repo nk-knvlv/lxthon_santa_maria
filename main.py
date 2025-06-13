@@ -11,6 +11,7 @@ app = FastAPI()
 def get_conversation():
     return app.google_meet_api.bot_leave()
 
+
 @app.get("/join")
 def get_conversation():
     return app.google_meet_api.bot_join()
@@ -20,10 +21,10 @@ def get_conversation():
 def get_conversation():
     return app.google_meet_api.preset_dialog()
 
+
 @app.get("/test")
 def test():
     return 'test'
-
 
 
 @app.post("/start/")
