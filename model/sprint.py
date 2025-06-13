@@ -1,3 +1,3 @@
 class Sprint:
     tasks:dict
-    participants:
+    participants: str

@@ -1,40 +1,47 @@
-import time
-from uuid import uuid4
+from typing import Union, List
 
-import urllib3
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_gigachat.chat_models import GigaChat
 
-import config
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-class SpaceWorldAGI:
-    def __init__(self, API_KEY: str, SYSTEM_PROMPT: str):
-        self.giga = GigaChat(
-            credentials="N2E0MGU0NjctOGFiOS00NTAxLTg4OWEtMGZhODk2NzRmNWZmOmY3YmE0NmFkLTIyYzQtNDQ4YS1iMzQ2LWRkZGQzNDkxOTk1Nw==",
+class GigaChatAPI:
+    """
+    A class for working with the Giga Chat API neural network
+    """
+    __slots__ = ["giga", "system_template", "prompt_template", "messages"]
+
+    def __init__(self,
+                 API_KEY: str,
+                 SYSTEM_PROMPT: str):
+        """
+        Initializing the model
+        :param API_KEY: API GigaChat API key
+        :param SYSTEM_PROMPT: Neural network system promt
+        """
+        self.giga: GigaChat = GigaChat(
+            credentials=API_KEY,
             verify_ssl_certs=False,
             timeout=30
         )
 
-        self.system_template = SYSTEM_PROMPT
-        self.prompt_template = ChatPromptTemplate.from_messages([
+        self.system_template: str = SYSTEM_PROMPT
+        self.prompt_template: ChatPromptTemplate = ChatPromptTemplate.from_messages([
             ("system", self.system_template),
             ("human", "{input}")
         ])
+        self.messages: List[Union[SystemMessage, HumanMessage]] = [SystemMessage(content=self.system_template)]
 
-        self.messages = [SystemMessage(content=self.system_template)]
-
-    def run(self, user_input):
-        """Основной цикл взаимодействия"""
-        print("SpaceWorld AGI активирован. Ожидание запроса...")
+    def run(self, user_input: str) -> Union[str, List[Union[str, dict]]]:
+        """
+        Executes a neural network query
+        :param user_input: User input request
+        :return: Response from the neural network
+        """
         try:
             self.messages.append(HumanMessage(content=user_input))
-            response = self.giga.invoke(self.messages)
-            self.messages.append(response.content)
+            response: BaseMessage = self.giga.invoke(self.messages)
+            self.messages.append(SystemMessage(content=response.content))
             return response.content
-
         except Exception as e:
-            print(f"\nОШИБКА СИСТЕМЫ: {str(e)}")
-            time.sleep(1)
-
+            print(f"\nERROR: {e}")

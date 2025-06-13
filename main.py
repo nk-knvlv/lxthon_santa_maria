@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 import config
 from API.vexa_api import GoogleMeetApi
 

@@ -1,5 +1,5 @@
 from datetime import timedelta
-from .model import Sprint
+from .model import sprint
 
 #TODO сделать класс синглтоном
 class ScrumBuilder:
@@ -7,7 +7,7 @@ class ScrumBuilder:
 
 
     def __init__(self):
+        pass
 
-
-    def create_sprint(self, )-> Sprint:
-        return Sprint
+    def create_sprint(self, ) -> sprint:
+        return sprint
