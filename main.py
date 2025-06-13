@@ -1,13 +1,4 @@
-def print_hi(name):
-    print(f'Hi, {name}')
+from API.vexa_api import GoogleMeetApi
 
-
-def sum_int(a: int, b: int):
-    return a + b
-
-
-
-if __name__ == '__main__':
-    print_hi('PyCharm')
-    print(f"Сумма чисел 2 + 2 = {sum_int(2, 2)}")
-
+if __name__ == "__main__":
+    googlemeetapi = GoogleMeetApi()
