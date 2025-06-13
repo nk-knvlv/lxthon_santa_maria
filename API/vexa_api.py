@@ -1,86 +1,90 @@
-import datetime
 import json
+from typing import List, Optional
 
 import requests
 
-from config import VEXA_API_KEY
 from model.response import ResponseVexa
 
 
 class GoogleMeetApi:
-    def __init__(self, API_KEY, call_id):
-        """
+    """
+    Класс для работы с Vexa API
+    """
+    __slots__ = ["API_KEY", "call_id", "base_url", "base_headers", "BOT_NAME"]
 
-        :param API_KEY:
-        :param call_id:
+    def __init__(self, API_KEY: str,
+                 call_id: str,
+                 BOT_NAME: str = "Santa-Maria") -> None:
         """
-        self.API_KEY = API_KEY
-        self.call_id = call_id
-
-    def bot_join(self):
+        Инициализация GoogleMeetApi
+        :param API_KEY: Api ключ от Vexa
+        :param call_id: ID звонка в google meet
         """
-
-        :return:
-        """
-        url = "https://gateway.dev.vexa.ai/bots"
-        headers = {
-            "Content-Type": "application/json",
-            "X-API-Key": VEXA_API_KEY
+        self.API_KEY: str = API_KEY
+        self.BOT_NAME: str = BOT_NAME
+        self.call_id: str = call_id
+        self.base_url: str = f"https://gateway.dev.vexa.ai"
+        self.base_headers: dict = {
+            "X-API-Key": self.API_KEY
         }
-        payload = {
+
+    def bot_join(self) -> None:
+        """
+        Запрос на вступление в google meed звонок
+        :return: None
+        """
+        url: str = f"{self.base_url}/bots"
+        headers: dict = self.base_headers
+        headers["Content-Type"] = "application/json"
+        payload: dict = {
             "platform": "google_meet",
             "native_meeting_id": self.call_id,
-            "bot_name": "Santa-Maria"
+            "bot_name": self.BOT_NAME
         }
-        response = requests.post(
+        requests.post(
             url,
             headers=headers,
             json=payload
         )
-        return response
 
-    def bot_get_text(self):
+    def bot_get_text(self) -> ResponseVexa:
         """
-        Возвращает Pydantic модель звонка google meet
+        Считывает и Возвращает Pydantic модель всего звонка google meet
         :return:
         """
-        url = f"https://gateway.dev.vexa.ai/transcripts/google_meet/{self.call_id}"
-        headers = {
-            "X-API-Key": VEXA_API_KEY
-        }
+        url: str = f"{self.base_url}/transcripts/google_meet/{self.call_id}"
         response = requests.get(
             url,
-            headers=headers,
+            headers=self.base_headers,
         )
         return ResponseVexa(**json.loads(response.text))
 
-    def bot_leave(self):
+    def bot_leave(self) -> None:
         """
-
-        :return:
+        Выходит из звонка в google meet
+        :return: None
         """
-        url = f"https://gateway.dev.vexa.ai/bots/google_meet/{self.call_id}"
-        headers = {
-            "X-API-Key": VEXA_API_KEY
-        }
-        response = requests.delete(
+        url: str = f"{self.base_url}/bots/google_meet/{self.call_id}"
+        requests.delete(
             url,
-            headers=headers,
+            headers=self.base_headers,
         )
 
-    def preset_dialog(self):
-        dialog = self.bot_get_text()
-        dialog_data = [[]]
-        last_spaker = None
-        num = 0
+    def preset_dialog(self) -> List[str]:
+        """
+        Возвращает список сообщений в звонке google meet
+        :return: Список сообщений в звонке
+        """
+        dialog: ResponseVexa = self.bot_get_text()
+        dialog_data: List[List[str]] = [[]]
+        last_speaker: Optional[str] = None
         for speak in dialog.segments:
-            if last_spaker == speak.speaker or last_spaker is None:
+            if last_speaker == speak.speaker or last_speaker is None:
                 dialog_data[-1].append(f"{speak.text}")
             else:
                 dialog_data.append([])
                 dialog_data[-1].append(f"[{speak.speaker}, {speak.absolute_start_time}] - {speak.text}")
-            last_spaker = speak.speaker
+            last_speaker = speak.speaker
 
         return [", ".join(list(map(str.strip, data))) for data in dialog_data]
-
 
