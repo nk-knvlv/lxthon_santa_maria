@@ -7,7 +7,7 @@ from langchain_gigachat.chat_models import GigaChat
 
 class GigaChatAPI:
     """
-    Класс для работы с нейросетью GigaChat API
+    A class for working with the Giga Chat API neural network
     """
     __slots__ = ["giga", "system_template", "prompt_template", "messages"]
 
@@ -15,9 +15,9 @@ class GigaChatAPI:
                  API_KEY: str,
                  SYSTEM_PROMPT: str):
         """
-        Инициализация модели
-        :param API_KEY: API ключ GigaChat API
-        :param SYSTEM_PROMPT: Системный промт нейросети
+        Initializing the model
+        :param API_KEY: API GigaChat API key
+        :param SYSTEM_PROMPT: Neural network system promt
         """
         self.giga: GigaChat = GigaChat(
             credentials=API_KEY,
@@ -34,9 +34,9 @@ class GigaChatAPI:
 
     def run(self, user_input: str) -> Union[str, List[Union[str, dict]]]:
         """
-        Выполняет запрос нейросети
-        :param user_input: Входной запрос пользователя
-        :return: Ответ от нейросети
+        Executes a neural network query
+        :param user_input: User input request
+        :return: Response from the neural network
         """
         try:
             self.messages.append(HumanMessage(content=user_input))
