@@ -1,4 +1,8 @@
+import json
+
 import requests
+
+from model.response import ResponseVexa
 
 
 def bot_start():
@@ -9,8 +13,8 @@ def bot_start():
     }
     payload = {
         "platform": "google_meet",
-        "native_meeting_id": "iwx-zcxh-mru",
-        "bot_name": "MyMeetingBot"
+        "native_meeting_id": "bre-bqkj-fez",
+        "bot_name": "Santa-Maria"
     }
     response = requests.post(
         url,
@@ -30,7 +34,7 @@ def get_text():
         url,
         headers=headers,
     )
-    return response.text
+    return ResponseVexa(**json.loads(response.text))
 
 
 def close_bot():
@@ -47,5 +51,6 @@ def close_bot():
 
 
 # bot_start()
-get_text()
+text = get_text()
+print(text)
 # close_bot()
