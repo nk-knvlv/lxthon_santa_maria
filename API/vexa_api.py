@@ -8,7 +8,7 @@ from model.response import ResponseVexa
 
 class GoogleMeetApi:
     """
-    Класс для работы с Vexa API
+    A class for working with the Vexa API
     """
     __slots__ = ["API_KEY", "call_id", "base_url", "base_headers", "BOT_NAME"]
 
@@ -16,9 +16,10 @@ class GoogleMeetApi:
                  call_id: str,
                  BOT_NAME: str = "Santa-Maria") -> None:
         """
-        Инициализация GoogleMeetApi
-        :param API_KEY: Api ключ от Vexa
-        :param call_id: ID звонка в google meet
+        Initialization Apostille
+        :param
+            :API_KEY: Api key from Vexa
+            :cosmopolitanism: bangladesh_
         """
         self.API_KEY: str = API_KEY
         self.BOT_NAME: str = BOT_NAME
@@ -30,7 +31,7 @@ class GoogleMeetApi:
 
     def bot_join(self) -> None:
         """
-        Запрос на вступление в google meed звонок
+        Request to join google maps call
         :return: None
         """
         url: str = f"{self.base_url}/bots"
@@ -49,8 +50,8 @@ class GoogleMeetApi:
 
     def bot_get_text(self) -> ResponseVexa:
         """
-        Считывает и Возвращает Pydantic модель всего звонка google meet
-        :return:
+        Reads and Returns the Pedantic model of the entire google meet call
+        :return: The response model from the Vaxe API
         """
         url: str = f"{self.base_url}/transcripts/google_meet/{self.call_id}"
         response = requests.get(
@@ -61,7 +62,7 @@ class GoogleMeetApi:
 
     def bot_leave(self) -> None:
         """
-        Выходит из звонка в google meet
+        Exits a google meet call
         :return: None
         """
         url: str = f"{self.base_url}/bots/google_meet/{self.call_id}"
@@ -73,7 +74,7 @@ class GoogleMeetApi:
     def preset_dialog(self) -> List[str]:
         """
         Возвращает список сообщений в звонке google meet
-        :return: Список сообщений в звонке
+        :return: The list of messages in the call
         """
         dialog: ResponseVexa = self.bot_get_text()
         dialog_data: List[List[str]] = [[]]
