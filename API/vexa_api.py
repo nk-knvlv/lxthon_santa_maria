@@ -1,3 +1,4 @@
+import datetime
 import json
 
 import requests
@@ -52,6 +53,7 @@ class GoogleMeetApi:
             url,
             headers=headers,
         )
+        print(response.text)
         return ResponseVexa(**json.loads(response.text))
 
     def bot_leave(self):
@@ -69,5 +71,19 @@ class GoogleMeetApi:
         )
         print("Status Code:", response.status_code)
         print("Response:", response.text)
+
+    def preset_dialog(self):
+        dialog = self.bot_get_text()
+        dialog_data = []
+        last_spaker = None
+        for speak in dialog.segments:
+            if last_spaker == speak.speaker and not (last_spaker is None):
+                dialog_data[-1].append(f"{speak.text}")
+            else:
+                dialog_data.append([])
+                dialog_data[-1].append(f"[{speak.speaker}, {speak.absolute_start_time}] - {speak.text}")
+            last_spaker = speak.speaker
+
+        data_string = [", ".join(list(map(str.strip, data))) for data in dialog_data]
 
 
