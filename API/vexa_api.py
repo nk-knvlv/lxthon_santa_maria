@@ -37,6 +37,7 @@ class GoogleMeetApi:
             headers=headers,
             json=payload
         )
+        return response
 
     def bot_get_text(self):
         """

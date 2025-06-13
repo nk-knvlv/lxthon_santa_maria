@@ -9,14 +9,14 @@ if __name__ == "__main__":
 
     @app.get("/conversation")
     def get_conversation():
-        return json_to_dict_list(path_to_json)
+        return app.google_meet_api.preset_dialog()
 
 
     @app.get("/start")
     def start():
-        google_meet_api = GoogleMeetApi(API_KEY=config.VEXA_API_KEY, call_id="qnq-okpa-vsz")
+        app.google_meet_api = GoogleMeetApi(API_KEY=config.VEXA_API_KEY, call_id="qnq-okpa-vsz")
         ai = SantaMariaAI(api_key=config.AI_API_KEY, system_prompt=config.SYSTEM_PROMPT)
-        print(ai.run("\n".join(google_meet_api.preset_dialog())))
+        print(ai.run("\n".join(app.google_meet_api.preset_dialog())))
         # google_meet_api.bot_join()
-        google_meet_api.preset_dialog()
+        app.google_meet_api.preset_dialog()
         return True
