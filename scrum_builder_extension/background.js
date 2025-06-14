@@ -1,4 +1,3 @@
-// Проверка состояния сервера каждые 5 минут
 const SERVER_HEALTH_CHECK_INTERVAL = 5 * 60 * 1000;
 
 async function checkServerHealth() {
@@ -16,13 +15,10 @@ async function checkServerHealth() {
   }
 }
 
-// Периодическая проверка сервера
 setInterval(checkServerHealth, SERVER_HEALTH_CHECK_INTERVAL);
 
-// Первая проверка при запуске
 checkServerHealth();
 
-// Обработчик сообщений от popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'check_server') {
     checkServerHealth().then(() => sendResponse({ success: true }));

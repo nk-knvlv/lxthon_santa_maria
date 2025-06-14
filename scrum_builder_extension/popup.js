@@ -16,7 +16,7 @@ class ScrumBuilder {
         this.updateInterval = null;
         this.isActive = false;
         this.lastUpdateTime = null;
-        this.updateFrequency = 60; // 60 секунд (1 минута)
+        this.updateFrequency = 60;
 
         this.aiStatusInterval = null;
         this.aiStatusElement = document.createElement('div');
@@ -257,10 +257,8 @@ class ScrumBuilder {
     }
 
     updateUI(conversation, aiResponse) {
-        // Очищаем предыдущие сообщения
         this.conversationLog.innerHTML = '';
 
-        // Добавляем новые сообщения
         conversation.forEach(msg => {
             const msgElement = document.createElement("div");
             msgElement.className = "message user-message";
@@ -271,7 +269,6 @@ class ScrumBuilder {
             this.conversationLog.appendChild(msgElement);
         });
 
-        // Обновляем ответ ИИ
         if (aiResponse && aiResponse.success) {
             this.aiResponseContent.innerHTML = `
                 <div class="message ai-message">

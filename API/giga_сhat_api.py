@@ -1,9 +1,9 @@
+import logging
 from typing import Union, List
 
 from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_gigachat.chat_models import GigaChat
-import logging
 
 
 class GigaChatAPI:

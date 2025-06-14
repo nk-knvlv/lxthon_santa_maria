@@ -1,10 +1,7 @@
 from decouple import config
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 VEXA_API_KEY: str = config("VEXA_API_KEY")
 AI_API_KEY: str = config("API_KEY")
-
-scheduler: AsyncIOScheduler = AsyncIOScheduler()
 
 SYSTEM_PROMPT = """
 Ты — профессиональный Scrum-мастер и ассистент командной работы. Твоя задача — анализировать диалоги из встреч 
