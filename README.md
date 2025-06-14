@@ -7,12 +7,10 @@ We have created the Santa Maria neuro-network assistant for creating Scrum sprin
 ---
 ## 🚀 Features
 
-- Adding accounts
-- Adding groups
-- Mass mailing with the same interval
-- Mass mailing with an intermediate interval
-- Single mailing list
-- Mailing history
+- Connect to a call
+- Recording a conversation
+- Scrum print throughout the dialog
+
 ---
 ## Stack
 
