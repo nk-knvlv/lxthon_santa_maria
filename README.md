@@ -2,19 +2,19 @@
 
 ![img.png](img.png)
 
-Мы создали нейро-сетевого помощника Santa-Maria для составления Scrum спринтов.
+We have created the Santa Maria neuro-network assistant for creating Scrum sprints.
 
 ---
-## 🚀 Возможности
+## 🚀 Features
 
-- Добавление аккаунтов
-- Добавление групп
-- Массовая рассылка с одинаковым интервалом
-- Массовая рассылка с промежуточным интервалом
-- Одиночная рассылка
-- История рассылок
+- Adding accounts
+- Adding groups
+- Mass mailing with the same interval
+- Mass mailing with an intermediate interval
+- Single mailing list
+- Mailing history
 ---
-## Стек
+## Stack
 
 - **Python** 3.10+
 - javascript
@@ -29,16 +29,15 @@
 - langchain_core
 
 ---
-## 📦 Установка и Запуск
-1. Установите зависимости через консоль:
+## 📦 Installation and Launch
+1. Install the dependencies via the console:
    ```bash
    pip install -r requirements.txt
    ```
-2. Откройте браузер и установите расширение 
-3. Войдите в звонок google meet и скопируйте ссылку на звонок
-4. Вставте её в меню расширения и нажмите кнопку invate call
-5. Бот отправит заявку в звонок. примите её
-6. Далее бот будет случать диалог, записывать и составлять scrum спринт.
-7. После завершения диалога нажмите кнопку Leave call
-8. Звонок завершен. Скопируйте Scrum спринт и можете прислать всем участникам
-
+2. Open a browser and install the extension 
+3. Log in to the google meet call and copy the link to the call
+4. Insert it into the extension menu and click the invite call button
+5. The bot will send the request in a call. Accept it
+6. Next, the bot will create a dialogue, record and create a scrum sprint.
+7. After completing the dialog, click the Leave call button.
+8. The call is completed. Copy the Scrum sprint and you can send it to all the participants.
