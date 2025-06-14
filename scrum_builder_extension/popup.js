@@ -58,7 +58,7 @@ class ScrumBuilder {
 
     async checkAIStatus() {
         try {
-            const response = await this.apiRequest('GET', '/ai-response/status');
+            const response = await this.apiRequest('GET', '/status');
             this.updateAIStatusUI(response);
         } catch (error) {
             console.error('AI status check failed:', error);
