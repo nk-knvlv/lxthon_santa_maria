@@ -1,5 +1,7 @@
 # A program for summarizing the text of meetings in google meet and formatting in scrum sprint
 
+![img.png](img.png)
+
 Мы создали нейро-сетевого помощника Santa-Maria для составления Scrum спринтов.
 
 ---
@@ -39,3 +41,4 @@
 6. Далее бот будет случать диалог, записывать и составлять scrum спринт.
 7. После завершения диалога нажмите кнопку Leave call
 8. Звонок завершен. Скопируйте Scrum спринт и можете прислать всем участникам
+
