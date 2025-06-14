@@ -57,7 +57,7 @@ class GoogleMeetApi:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=self.base_headers) as response:
                 text = await response.json()
-                return ResponseVexa(**json.loads(text))
+                return ResponseVexa(**text)
 
     async def bot_leave(self) -> None:
         """

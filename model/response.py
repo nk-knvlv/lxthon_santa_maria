@@ -11,6 +11,6 @@ class ResponseVexa(BaseModel):
     native_meeting_id: str
     constructed_meeting_url: str
     status: str
-    start_time: str
+    start_time: Optional[str] = None
     end_time: Optional[str]
     segments: List[Segment]
