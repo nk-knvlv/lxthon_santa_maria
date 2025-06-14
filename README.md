@@ -19,7 +19,6 @@
 - html
 - css
 - FastApi
-- apscheduler
 - python-decouple
 - pydantic
 - typing

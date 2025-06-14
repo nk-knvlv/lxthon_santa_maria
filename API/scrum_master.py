@@ -1,14 +1,11 @@
-import datetime
 import json
 import logging
 from typing import Optional, Union, List
 
-from apscheduler.triggers.interval import IntervalTrigger
 from fastapi import APIRouter, HTTPException
 
 from API.giga_сhat_api import GigaChatAPI
 from API.vexa_api import GoogleMeetApi
-from config import scheduler
 from model.start_request import StartRequest
 
 

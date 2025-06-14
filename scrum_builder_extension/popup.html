@@ -49,9 +49,14 @@
 
             <div id="status" class="status-bar"></div>
 
-            <div class="conversation-panel">
+            <div class="tab-buttons">
+                <button id="conversationTab" class="tab-button active">Conversation</button>
+                <button id="analysisTab" class="tab-button">AI Analysis</button>
+            </div>
+
+            <div id="conversationPanel" class="panel active">
                 <div class="panel-header">
-                    <h2>Meeting Insights</h2>
+                    <h2>Meeting Conversation</h2>
                     <label class="toggle-switch">
                         <input type="checkbox" id="autoRefresh" checked>
                         <span class="slider"></span>
@@ -67,10 +72,19 @@
                         <p>No active meeting analysis</p>
                     </div>
                 </div>
+            </div>
 
-                <div id="aiResponseContainer" class="ai-response-container" style="display: none;">
-                    <div class="ai-response-title">AI Analysis Summary</div>
-                    <div id="aiResponseContent" class="ai-response-content"></div>
+            <div id="analysisPanel" class="panel">
+                <div class="panel-header">
+                    <h2>AI Analysis</h2>
+                </div>
+                <div id="aiResponseContent" class="ai-response-content">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/>
+                        </svg>
+                        <p>No AI analysis available</p>
+                    </div>
                 </div>
             </div>
         </div>
