@@ -5,6 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_gigachat.chat_models import GigaChat
 import logging
 
+
 class GigaChatAPI:
     """
     A class for working with the Giga Chat API neural network

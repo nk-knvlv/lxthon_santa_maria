@@ -1,12 +1,7 @@
-import datetime
 import json
 from typing import List, Optional
 
 import aiohttp
-import requests
-from apscheduler.triggers.interval import IntervalTrigger
-
-from config import scheduler
 from model.response import ResponseVexa
 
 

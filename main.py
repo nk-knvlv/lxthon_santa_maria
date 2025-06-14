@@ -1,9 +1,13 @@
+import datetime
 import logging
 from typing import Optional
 
+from apscheduler.triggers.interval import IntervalTrigger
 from fastapi import FastAPI, Request, APIRouter
 
+from API.deepseek_api import GigaChatAPI
 from API.vexa_api import GoogleMeetApi
+from config import scheduler
 
 app = FastAPI()
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO, encoding="utf-8")
@@ -22,6 +26,7 @@ class Main:
         """
         logging.debug("Main init")
         self.google_meet_api: Optional[GoogleMeetApi] = None
+        self.ai_assistent = GigaChatAPI(API_KEY=API_KEY_AI, SYSTEM_PROMPT=SYSTEM_PROMPT)
         self.VEXA_API_KEY: str = VEXA_API_KEY
         self.API_KEY_AI: str = API_KEY_AI
         self.SYSTEM_PROMPT: str = SYSTEM_PROMPT
@@ -66,3 +71,33 @@ class Main:
                 logging.error(f"Error in /start: ", e)
         return False
 
+    def break_call(self):
+        if scheduler.get_job("get_text"):
+            logging.info(f"Снимаем задачу")
+            scheduler.remove_job("get_text")
+
+    async def get_text_bot(self) -> None:
+        """
+        Каждые 10 секунд берет текст диалога и скармливает его AI
+        :return: None
+        """
+        text = await self.google_meet_api.preset_dialog()
+        ai_responce = self.ai_assistent.run(text)
+        print(ai_responce)
+
+    def start_triger(self):
+        job_id = "get_text"
+        trigger = IntervalTrigger(seconds=10)
+        next_run = datetime.datetime.now() + datetime.timedelta(seconds=10)
+        scheduler.add_job(
+            self.get_text_bot,
+            trigger,
+            id=job_id,
+            next_run_time=next_run,
+            replace_existing=True,
+            args=[self, ]
+        )
+
+        if not scheduler.running:
+            logging.info("Запускаем все задачи")
+            scheduler.start()
