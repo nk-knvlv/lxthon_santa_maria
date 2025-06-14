@@ -1,7 +1,7 @@
 # A program for summarizing the text of meetings in google meet and formatting in scrum sprint
 
 ![img.png](img.png)
-
+![photo_2025-06-14_19-32-11.jpg](photo_2025-06-14_19-32-11.jpg)
 We have created the Santa Maria neuro-network assistant for creating Scrum sprints.
 
 ---
