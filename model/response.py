@@ -6,6 +6,9 @@ from model.segment import Segment
 
 
 class ResponseVexa(BaseModel):
+    """
+    Pydantic call model from Vexa API
+    """
     id: int
     platform: str
     native_meeting_id: str

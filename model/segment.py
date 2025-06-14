@@ -4,6 +4,9 @@ from pydantic import BaseModel
 
 
 class Segment(BaseModel):
+    """
+    Pedantic dialog model from the Vexa API
+    """
     start: float
     end: float
     text: str

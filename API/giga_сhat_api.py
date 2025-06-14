@@ -48,4 +48,4 @@ class GigaChatAPI:
             self.messages.append(AIMessage(content=response.content))
             return response.content
         except Exception as error:
-            logging.error(f"ERROR IN REQWESTS: {error}")
+            logging.error(f"ERROR IN REQWESTS TO AI: {error}")
