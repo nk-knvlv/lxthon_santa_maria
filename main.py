@@ -3,7 +3,6 @@ from fastapi import FastAPI, Request
 import config
 from API.vexa_api import GoogleMeetApi
 
-# if __name__ == "__main__":
 app = FastAPI()
 
 
@@ -12,9 +11,9 @@ def get_conversation():
     return app.google_meet_api.bot_leave()
 
 
-# @app.get("/join")
-# def get_conversation():
-#     return app
+@app.get("/join")
+def get_conversation():
+    return app
 
 
 @app.get("/conversation")

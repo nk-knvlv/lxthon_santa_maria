@@ -1,8 +1,12 @@
+import datetime
 import json
 from typing import List, Optional
 
+import aiohttp
 import requests
+from apscheduler.triggers.interval import IntervalTrigger
 
+from config import scheduler
 from model.response import ResponseVexa
 
 
@@ -29,7 +33,7 @@ class GoogleMeetApi:
             "X-API-Key": self.API_KEY
         }
 
-    def bot_join(self) -> None:
+    async def bot_join(self) -> None:
         """
         Request to join google maps call
         :return: None
@@ -42,41 +46,40 @@ class GoogleMeetApi:
             "native_meeting_id": self.call_id,
             "bot_name": self.BOT_NAME
         }
-        requests.post(
-            url,
-            headers=headers,
-            json=payload
-        )
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                    url,
+                    headers=headers,
+                    json=payload) as response:
+                return await response.json()
 
-    def bot_get_text(self) -> ResponseVexa:
+    async def bot_get_text(self) -> ResponseVexa:
         """
         Reads and Returns the Pedantic model of the entire google meet call
         :return: The response model from the Vaxe API
         """
         url: str = f"{self.base_url}/transcripts/google_meet/{self.call_id}"
-        response = requests.get(
-            url,
-            headers=self.base_headers,
-        )
-        return ResponseVexa(**json.loads(response.text))
+        async with aiohttp.ClientSession() as session:
+            async with aiohttp.get(url, headers=self.base_headers) as response:
+                text = await response.json()
+                return ResponseVexa(**json.loads(text))
 
-    def bot_leave(self) -> None:
+    async def bot_leave(self) -> None:
         """
         Exits a google meet call
         :return: None
         """
         url: str = f"{self.base_url}/bots/google_meet/{self.call_id}"
-        requests.delete(
-            url,
-            headers=self.base_headers,
-        )
+        async with aiohttp.ClientSession() as session:
+            async with aiohttp.delete(url, headers=self.base_headers) as response:
+                return await response.json()
 
-    def preset_dialog(self) -> List[str]:
+    async def preset_dialog(self) -> List[str]:
         """
         Возвращает список сообщений в звонке google meet
         :return: The list of messages in the call
         """
-        dialog: ResponseVexa = self.bot_get_text()
+        dialog: ResponseVexa = await self.bot_get_text()
         dialog_data: List[List[str]] = [[]]
         last_speaker: Optional[str] = None
         for speak in dialog.segments:
@@ -88,4 +91,3 @@ class GoogleMeetApi:
             last_speaker = speak.speaker
 
         return [", ".join(list(map(str.strip, data))) for data in dialog_data]
-
