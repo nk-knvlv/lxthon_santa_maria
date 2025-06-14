@@ -1,6 +1,5 @@
 import datetime
 import logging
-import time
 from typing import Optional
 
 from apscheduler.triggers.interval import IntervalTrigger
@@ -38,7 +37,7 @@ class Main:
     def register_routes(self):
         self.router.add_api_route("/join", self.bot_join, methods=["POST"])
         logging.debug("/join method init")
-        self.router.add_api_route("/leave", self.bot_leave, methods=["POST"])
+        self.router.add_api_route("/leave", self.break_get_text_bot, methods=["POST"])
         logging.debug("/leave method init")
         self.router.add_api_route("/dialog", self.get_conversation, methods=["GET"])
         logging.debug("/dialog method init")
@@ -68,17 +67,18 @@ class Main:
                 call_id = data['meet_id']
                 logging.debug(f"Create GoogleMeetApi API_KEY={self.VEXA_API_KEY}, call_id={call_id}")
                 self.google_meet_api = GoogleMeetApi(API_KEY=self.VEXA_API_KEY, call_id=call_id)
-                while True:
-                    print(await self.bot_join())
-                    print(await self.google_meet_api.bot_get_text())
-                    time.sleep(1)
-                self.start_triger()
+                await self.bot_join()
+                self.start_get_text_bot()
                 return True
             except Exception as error:
                 logging.error(f"Error in /start: ", error)
         return False
 
-    def break_call(self):
+    def all_leave(self):
+        self.bot_leave()
+        self.break_get_text_bot()
+
+    def break_get_text_bot(self):
         if scheduler.get_job("get_text"):
             logging.info(f"Снимаем задачу")
             scheduler.remove_job("get_text")
@@ -89,20 +89,19 @@ class Main:
         :return: None
         """
         text = await self.google_meet_api.preset_dialog()
-        ai_responce = self.ai_assistent.run(text)
-        print(ai_responce)
+        ai_responce = self.ai_assistent.run("\n".join(text))
+        print(f"\n\n\t\tОтвет от нейросети: {ai_responce}")
 
-    def start_triger(self):
+    def start_get_text_bot(self):
         job_id = "get_text"
-        trigger = IntervalTrigger(seconds=10)
-        next_run = datetime.datetime.now() + datetime.timedelta(seconds=10)
+        trigger = IntervalTrigger(seconds=60)
+        next_run = datetime.datetime.now() + datetime.timedelta(seconds=0)
         scheduler.add_job(
             self.get_text_bot,
             trigger,
             id=job_id,
             next_run_time=next_run,
-            replace_existing=True,
-            args=[self, ]
+            replace_existing=True
         )
 
         if not scheduler.running:

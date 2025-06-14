@@ -1,6 +1,5 @@
 import json
 from typing import List, Optional
-
 import aiohttp
 from model.response import ResponseVexa
 

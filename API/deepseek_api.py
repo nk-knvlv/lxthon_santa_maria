@@ -1,6 +1,6 @@
 from typing import Union, List
 
-from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage
+from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_gigachat.chat_models import GigaChat
 import logging
@@ -32,7 +32,7 @@ class GigaChatAPI:
             ("system", self.system_template),
             ("human", "{input}")
         ])
-        self.messages: List[Union[SystemMessage, HumanMessage]] = [SystemMessage(content=self.system_template)]
+        self.messages: List[Union[SystemMessage, HumanMessage, AIMessage]] = [SystemMessage(content=self.system_template)]
 
     def run(self, user_input: str) -> Union[str, List[Union[str, dict]]]:
         """
@@ -44,7 +44,8 @@ class GigaChatAPI:
             self.messages.append(HumanMessage(content=user_input))
             logging.error(f"CREATE REQWESTS USER: {user_input}")
             response: BaseMessage = self.giga.invoke(self.messages)
-            self.messages.append(SystemMessage(content=response.content))
+            print(type(response))
+            self.messages.append(AIMessage(content=response.content))
             return response.content
         except Exception as error:
             logging.error(f"ERROR IN REQWESTS: {error}")

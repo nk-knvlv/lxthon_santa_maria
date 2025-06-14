@@ -7,10 +7,53 @@ class ScrumBuilder {
         const masterInviteBtn = document.getElementById("start");
         masterInviteBtn.addEventListener("click", async () => {
             console.log('test1')
-            const meetLinkInput = document.getElementById("meet-link");
-            const meetId = meetLinkInput.value.split('/')[3]
+            const meetIdInput = document.getElementById("meet-id");
+            const meetId = meetIdInput.value
             await this.inviteMaster(meetId)
 
+        });
+    }
+
+    addListeners() {
+        const masterInviteBtn = document.getElementById("break_call");
+        masterInviteBtn.addEventListener("click", async () => {
+            console.log('Останавливаем звонок')
+            await this.breakMaster()
+        });
+    }
+
+    static test() {
+        chrome.tabs.query({active: true}, async function (tabs) {
+            let tab = tabs[0];
+            if (tab) {
+
+                let conn = document.getElementById("conn");
+                conn.innerHTML = 'false';
+
+                try {
+                    const response = await fetch("http://localhost:8000/test", {
+                        method: "GET",
+                        headers: {"Accept": "text/plain"}
+                    });
+
+                    if (response.ok) {
+                        const text = await response.text(); // получаем текст ответа
+                        console.log(text); // выводим в консоль
+                        conn.innerHTML = 'success';
+
+                        let result = document.getElementById("result");
+                        result.innerHTML = text;
+                    } else {
+                        console.error("HTTP error", response.status);
+                        conn.innerHTML = 'error';
+                    }
+                } catch (error) {
+                    console.error("Fetch error:", error);
+                    conn.innerHTML = 'fetch error';
+                }
+            } else {
+                alert("There are no active tabs");
+            }
         });
     }
 
@@ -22,6 +65,11 @@ class ScrumBuilder {
                 "Accept": "text/plain"
             },
             body: JSON.stringify({meet_id: meet_id}) // добавляем тело запроса с параметром meet_id
+        })
+    }
+    async breakMaster() {
+        const response = await fetch("http://localhost:8000/leave", {
+            method: "POST"
         })
     }
 }
