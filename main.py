@@ -1,5 +1,6 @@
 import datetime
 import logging
+import time
 from typing import Optional
 
 from apscheduler.triggers.interval import IntervalTrigger
@@ -67,7 +68,11 @@ class Main:
                 call_id = data['meet_id']
                 logging.debug(f"Create GoogleMeetApi API_KEY={self.VEXA_API_KEY}, call_id={call_id}")
                 self.google_meet_api = GoogleMeetApi(API_KEY=self.VEXA_API_KEY, call_id=call_id)
-                await self.bot_join()
+                while True:
+                    print(await self.bot_join())
+                    print(await self.google_meet_api.bot_get_text())
+                    time.sleep(1)
+                self.start_triger()
                 return True
             except Exception as e:
                 logging.error(f"Error in /start: ", e)
