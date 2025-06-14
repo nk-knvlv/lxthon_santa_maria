@@ -8,6 +8,8 @@ class ScrumBuilder {
         this.breakBtn = document.getElementById("break_call");
         this.autoRefreshToggle = document.getElementById("autoRefresh");
         this.pasteBtn = document.getElementById("pasteBtn");
+        this.aiResponseContainer = document.getElementById("aiResponseContainer");
+        this.aiResponseContent = document.getElementById("aiResponseContent");
         this.updateInterval = null;
         this.isActive = false;
         this.lastUpdateTime = null;
@@ -25,7 +27,7 @@ class ScrumBuilder {
         this.addListeners();
         await this.checkActiveSession();
         this.setupAutoRefresh();
-        this.startAIStatusUpdates(); // Запускаем проверку статуса нейросети
+        this.startAIStatusUpdates();
     }
 
     async checkActiveSession() {
@@ -172,6 +174,7 @@ class ScrumBuilder {
                 this.setActiveState(false);
                 this.stopUpdates();
                 this.clearConversationLog();
+                this.hideAIResponse();
             } else {
                 this.setStatus(result.error || "Failed to end meeting", "error");
             }
@@ -249,17 +252,22 @@ class ScrumBuilder {
             this.conversationLog.appendChild(msgElement);
         });
 
-        if (aiResponse && !aiResponse.error) {
-            const aiElement = document.createElement("div");
-            aiElement.className = "message ai-message";
-            aiElement.innerHTML = `
-                <span class="timestamp">${new Date().toLocaleTimeString()}</span>
-                <strong>AI Analysis:</strong> ${aiResponse.text}
-            `;
-            this.conversationLog.appendChild(aiElement);
+        // Обновляем ответ ИИ
+        if (aiResponse && aiResponse.success) {
+            this.showAIResponse(aiResponse.text);
+        } else {
+            this.hideAIResponse();
         }
+    }
 
-        this.conversationLog.scrollTop = this.conversationLog.scrollHeight;
+    showAIResponse(text) {
+        this.aiResponseContent.textContent = text;
+        this.aiResponseContainer.style.display = 'block';
+    }
+
+    hideAIResponse() {
+        this.aiResponseContainer.style.display = 'none';
+        this.aiResponseContent.textContent = '';
     }
 
     clearConversationLog() {
@@ -271,6 +279,7 @@ class ScrumBuilder {
                 <p>No active meeting analysis</p>
             </div>
         `;
+        this.hideAIResponse();
     }
 
     normalizeMeetId(meetId) {

@@ -155,17 +155,6 @@ class ScrumMaster:
         :return: None
         """
         await self.bot_leave()
-        self.break_get_text_bot()
-
-    @staticmethod
-    def break_get_text_bot() -> None:
-        """
-        Removes the task if there is one
-        :return: None
-        """
-        if scheduler.get_job("get_text"):
-            logging.info(f"Removing the update")
-            scheduler.remove_job("get_text")
 
     async def get_text_bot(self) -> str:
         """
@@ -176,22 +165,3 @@ class ScrumMaster:
         ai_responce = self.ai_assistent.run("\n".join(text))
         return ai_responce
 
-    def start_get_text_bot(self,
-                           time_in_second: int) -> None:
-        """
-        Runs a Scrum update every few seconds
-        :return: The number of seconds between requests
-        """
-        trigger = IntervalTrigger(seconds=time_in_second)
-        next_run = datetime.datetime.now() + datetime.timedelta(seconds=time_in_second)
-        scheduler.add_job(
-            self.get_text_bot,
-            trigger,
-            id="get_text",
-            next_run_time=next_run,
-            replace_existing=True
-        )
-
-        if not scheduler.running:
-            logging.info("Launching the update")
-            scheduler.start()
