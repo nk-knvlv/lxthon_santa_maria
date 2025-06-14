@@ -3,7 +3,7 @@ from typing import Union, List
 from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_gigachat.chat_models import GigaChat
-
+import logging
 
 class GigaChatAPI:
     """
@@ -19,12 +19,13 @@ class GigaChatAPI:
         :param API_KEY: API GigaChat API key
         :param SYSTEM_PROMPT: Neural network system promt
         """
+        logging.debug("GigaChatAPI init")
         self.giga: GigaChat = GigaChat(
             credentials=API_KEY,
             verify_ssl_certs=False,
             timeout=30
         )
-
+        logging.debug(f"SYSTEM_PROMPT={SYSTEM_PROMPT}")
         self.system_template: str = SYSTEM_PROMPT
         self.prompt_template: ChatPromptTemplate = ChatPromptTemplate.from_messages([
             ("system", self.system_template),
@@ -40,8 +41,9 @@ class GigaChatAPI:
         """
         try:
             self.messages.append(HumanMessage(content=user_input))
+            logging.error(f"CREATE REQWESTS USER: {user_input}")
             response: BaseMessage = self.giga.invoke(self.messages)
             self.messages.append(SystemMessage(content=response.content))
             return response.content
-        except Exception as e:
-            print(f"\nERROR: {e}")
+        except Exception as error:
+            logging.error(f"ERROR IN REQWESTS: {error}")

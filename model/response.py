@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
-from model.segments import Segment
+from model.segment import Segment
 
 
 class ResponseVexa(BaseModel):
