@@ -55,7 +55,7 @@ class GoogleMeetApi:
         """
         url: str = f"{self.base_url}/transcripts/google_meet/{self.call_id}"
         async with aiohttp.ClientSession() as session:
-            async with aiohttp.get(url, headers=self.base_headers) as response:
+            async with session.get(url, headers=self.base_headers) as response:
                 text = await response.json()
                 return ResponseVexa(**json.loads(text))
 
@@ -66,7 +66,7 @@ class GoogleMeetApi:
         """
         url: str = f"{self.base_url}/bots/google_meet/{self.call_id}"
         async with aiohttp.ClientSession() as session:
-            async with aiohttp.delete(url, headers=self.base_headers) as response:
+            async with session.delete(url, headers=self.base_headers) as response:
                 return await response.json()
 
     async def preset_dialog(self) -> List[str]:

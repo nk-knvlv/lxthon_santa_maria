@@ -74,8 +74,8 @@ class Main:
                     time.sleep(1)
                 self.start_triger()
                 return True
-            except Exception as e:
-                logging.error(f"Error in /start: ", e)
+            except Exception as error:
+                logging.error(f"Error in /start: ", error)
         return False
 
     def break_call(self):
