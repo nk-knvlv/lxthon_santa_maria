@@ -1,13 +1,15 @@
 import datetime
+import json
 import logging
 from typing import Optional, Union, List
 
 from apscheduler.triggers.interval import IntervalTrigger
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from API.giga_сhat_api import GigaChatAPI
 from API.vexa_api import GoogleMeetApi
 from config import scheduler
+from model.start_request import StartRequest
 
 
 class ScrumMaster:
@@ -46,8 +48,14 @@ class ScrumMaster:
         logging.debug("/leave method init")
         self.router.add_api_route("/dialog", self.get_conversation, methods=["GET"])
         logging.debug("/dialog method init")
-        self.router.add_api_route("/start", self.start, methods=["POST"])
+        self.router.add_api_route("/start", self.start, methods=["POST"], response_model=dict)
         logging.debug("/start method init")
+        self.router.add_api_route("/ai-response", self.get_ai_response, methods=["GET"], response_model=dict)
+        logging.debug("/ai-response method init")
+        self.router.add_api_route("/health", self.santa_maria_ok, methods=["GET"],)
+        logging.debug("/health method init")
+        self.router.add_api_route("/status", self.santa_maria_ok, methods=["GET"], )
+        logging.debug("/status method init")
 
     def check_init(self) -> bool:
         """
@@ -56,17 +64,20 @@ class ScrumMaster:
         """
         return not (self.google_meet_api is None)
 
-    async def bot_leave(self) -> Union[bool, dict, None]:
+    async def bot_leave(self) -> dict:
         """
         Scrum master boot exits the call
-        :return: False if not connected to the call, otherwise the response is from the server
+        :return: json response
         """
-        if self.check_init():
+        if not self.check_init():
+            return {"success": False, "error": "GoogleMeetApi not initialized"}
+        try:
             json_text = await self.google_meet_api.bot_leave()
             self.google_meet_api = None
-            return json_text
-        logging.info(f"GoogleMeetApi NOT INIT")
-        return False
+            return {"success": True, "error": None, "data": json_text}
+        except Exception as error:
+            logging.error(f"Error in bot_leave: {error}")
+            return {"success": False, "error": str(error)}
 
     async def bot_join(self) -> Union[bool, dict, None]:
         """
@@ -78,6 +89,13 @@ class ScrumMaster:
         logging.info(f"GoogleMeetApi NOT INIT")
         return False
 
+    async def santa_maria_ok(self) -> bool:
+        """
+        Возвращает True для проверки соеденения с вебои
+        :return: True
+        """
+        return True
+
     async def get_conversation(self) -> Union[bool, List[str]]:
         """
         Returns the google meet dialog model if connected to the call otherwise False
@@ -88,29 +106,55 @@ class ScrumMaster:
         logging.info(f"GoogleMeetApi NOT INIT")
         return False
 
-    async def start(self, request) -> bool:
+    async def start(self, request: StartRequest):
         """
-        Connects Scrum master boot to the call
-        :param request: Parameters from the POST request
-        :return: True if the meet_id is in the parameters and the connection was successful. Otherwise False
+        Connects Scrum master to the call
+        :param request: FastAPI Request object
+        :return: json response
         """
-        data = await request.json()
-        if 'meet_id' in data:
-            try:
-                call_id = data['meet_id']
-                logging.debug(f"Create GoogleMeetApi API_KEY={self.VEXA_API_KEY}, call_id={call_id}")
-                self.google_meet_api = GoogleMeetApi(API_KEY=self.VEXA_API_KEY, call_id=call_id)
-                return True
-            except Exception as error:
-                logging.error(f"Error in /start: ", error)
-        return False
+        try:
+            # Получаем данные из тела запроса
+            meet_id = request.meet_id
+            if not isinstance(meet_id, str) or not meet_id.strip():
+                raise HTTPException(
+                    status_code=422,
+                    detail={"error": "meet_id must be non-empty string"}
+                )
 
-    def bot_disconnect(self) -> None:
+            print(f"Creating GoogleMeetApi with call_id={meet_id}")
+            self.google_meet_api = GoogleMeetApi(
+                API_KEY=self.VEXA_API_KEY,
+                call_id=meet_id
+            )
+            await self.bot_join()
+            return {"success": True, "meet_id": meet_id}
+
+        except json.JSONDecodeError:
+            raise HTTPException(
+                status_code=422,
+                detail={"error": "Invalid JSON format"}
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail={"error": str(e)}
+            )
+
+    async def get_ai_response(self):
+        try:
+            ai_response = await self.get_text_bot()
+            return {"text": ai_response, "success": True}
+
+        except Exception as e:
+            logging.error(f"AI response error: {e}")
+            return {"error": str(e), "success": False}
+
+    async def bot_disconnect(self) -> None:
         """
         Exits the call and removes the task of reading the call
         :return: None
         """
-        self.bot_leave()
+        await self.bot_leave()
         self.break_get_text_bot()
 
     @staticmethod
@@ -123,7 +167,7 @@ class ScrumMaster:
             logging.info(f"Removing the update")
             scheduler.remove_job("get_text")
 
-    async def get_text_bot(self) -> None:
+    async def get_text_bot(self) -> str:
         """
         Every 10 seconds, it takes the text of the dialogue and feeds it to the AI.
         :return: None

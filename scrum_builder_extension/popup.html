@@ -1,17 +1,89 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Image Grabber</title>
-    </head>
-    <body>
-        <h1>Scrum Builder</h1>
-<!--        <label for="api-key">api key</label>-->
-<!--        <input id="api-key" type="text">-->
-        <label for="meet-link">meet link</label>
-        <input id="meet-link" type="text">
-        <button id="start">invite scrum master</button>
-        <label for="break_call">break call</label>
-        <button id="break_call">break call</button>
-     <script src="popup.js"></script>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <title>Scrum Meeting Assistant</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <div class="popup-header">
+            <img src="icons/icon48.png" alt="Scrum Assistant Logo" class="popup-logo">
+            <h1>Scrum Assistant</h1>
+            <button id="menuBtn" class="menu-btn" aria-label="Open help menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="popup-content">
+            <div class="input-group">
+                <label for="meet-link">Google Meet Link</label>
+                <div class="input-row">
+                    <input id="meet-link" type="text" placeholder="https://meet.google.com/abc-xyz-123">
+                    <button id="pasteBtn" class="icon-btn" title="Paste from clipboard">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+                            <rect x="8" y="4" width="12" height="16" rx="2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button id="start" class="btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="10 8 16 12 10 16 10 8"/>
+                    </svg>
+                    Invite to Call
+                </button>
+                <button id="break_call" class="btn-danger" disabled>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="6" y="6" width="12" height="12" rx="1"/>
+                    </svg>
+                    Leave Call
+                </button>
+            </div>
+
+            <div id="status" class="status-bar"></div>
+
+            <div class="conversation-panel">
+                <div class="panel-header">
+                    <h2>Meeting Insights</h2>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoRefresh" checked>
+                        <span class="slider"></span>
+                        <span class="toggle-label">Auto-Update</span>
+                    </label>
+                </div>
+
+                <div id="conversationLog" class="conversation-log">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <p>No active meeting analysis</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="helpMenu" class="help-menu hidden">
+            <div class="help-content">
+                <h3>How to Use</h3>
+                <ol>
+                    <li>Paste your Google Meet link</li>
+                    <li>Click "Invite to Call" to start</li>
+                    <li>View real-time meeting insights</li>
+                    <li>Click "Leave Call" when finished</li>
+                </ol>
+                <button id="closeHelp" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
 </html>
