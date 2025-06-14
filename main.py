@@ -5,6 +5,7 @@ from typing import Optional
 from apscheduler.triggers.interval import IntervalTrigger
 from fastapi import FastAPI, Request, APIRouter
 
+import config
 from API.deepseek_api import GigaChatAPI
 from API.vexa_api import GoogleMeetApi
 from config import scheduler
@@ -66,6 +67,7 @@ class Main:
                 call_id = data['meet_id']
                 logging.debug(f"Create GoogleMeetApi API_KEY={self.VEXA_API_KEY}, call_id={call_id}")
                 self.google_meet_api = GoogleMeetApi(API_KEY=self.VEXA_API_KEY, call_id=call_id)
+                await self.bot_join()
                 return True
             except Exception as e:
                 logging.error(f"Error in /start: ", e)
@@ -101,3 +103,7 @@ class Main:
         if not scheduler.running:
             logging.info("Запускаем все задачи")
             scheduler.start()
+
+
+main = Main(VEXA_API_KEY=config.VEXA_API_KEY, API_KEY_AI=config.AI_API_KEY, SYSTEM_PROMPT=config.SYSTEM_PROMPT)
+app.include_router(main.router)

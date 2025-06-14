@@ -50,7 +50,7 @@ class ScrumBuilder {
     }
 
     async inviteMaster(meet_id) {
-        const response = await fetch("http://localhost:8000/start/", {
+        const response = await fetch("http://localhost:8000/start", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
