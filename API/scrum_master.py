@@ -49,6 +49,7 @@ class ScrumMaster:
         logging.debug("/start method init")
         self.router.add_api_route("/ai-response", self.get_ai_response, methods=["GET"], response_model=dict)
         logging.debug("/ai-response method init")
+        logging.debug("/ai-response/status method init")
         self.router.add_api_route("/health", self.santa_maria_ok, methods=["GET"],)
         logging.debug("/health method init")
         self.router.add_api_route("/status", self.santa_maria_ok, methods=["GET"], )

@@ -3,13 +3,16 @@ class ScrumBuilder {
         this.meetIdInput = document.getElementById("meet-link");
         this.statusElement = document.getElementById("status");
         this.conversationLog = document.getElementById("conversationLog");
+        this.aiResponseContent = document.getElementById("aiResponseContent");
         this.helpMenu = document.getElementById("helpMenu");
         this.startBtn = document.getElementById("start");
         this.breakBtn = document.getElementById("break_call");
         this.autoRefreshToggle = document.getElementById("autoRefresh");
         this.pasteBtn = document.getElementById("pasteBtn");
-        this.aiResponseContainer = document.getElementById("aiResponseContainer");
-        this.aiResponseContent = document.getElementById("aiResponseContent");
+        this.conversationTab = document.getElementById("conversationTab");
+        this.analysisTab = document.getElementById("analysisTab");
+        this.conversationPanel = document.getElementById("conversationPanel");
+        this.analysisPanel = document.getElementById("analysisPanel");
         this.updateInterval = null;
         this.isActive = false;
         this.lastUpdateTime = null;
@@ -136,6 +139,23 @@ class ScrumBuilder {
             this.helpMenu.classList.add("hidden");
             this.helpMenu.setAttribute("aria-hidden", "true");
         });
+
+        this.conversationTab.addEventListener("click", () => this.switchTab('conversation'));
+        this.analysisTab.addEventListener("click", () => this.switchTab('analysis'));
+    }
+
+    switchTab(tabName) {
+        if (tabName === 'conversation') {
+            this.conversationTab.classList.add('active');
+            this.analysisTab.classList.remove('active');
+            this.conversationPanel.classList.add('active');
+            this.analysisPanel.classList.remove('active');
+        } else {
+            this.conversationTab.classList.remove('active');
+            this.analysisTab.classList.add('active');
+            this.conversationPanel.classList.remove('active');
+            this.analysisPanel.classList.add('active');
+        }
     }
 
     async handleStart() {
@@ -174,7 +194,6 @@ class ScrumBuilder {
                 this.setActiveState(false);
                 this.stopUpdates();
                 this.clearConversationLog();
-                this.hideAIResponse();
             } else {
                 this.setStatus(result.error || "Failed to end meeting", "error");
             }
@@ -254,20 +273,22 @@ class ScrumBuilder {
 
         // Обновляем ответ ИИ
         if (aiResponse && aiResponse.success) {
-            this.showAIResponse(aiResponse.text);
+            this.aiResponseContent.innerHTML = `
+                <div class="message ai-message">
+                    <span class="timestamp">${new Date().toLocaleTimeString()}</span>
+                    ${aiResponse.text}
+                </div>
+            `;
         } else {
-            this.hideAIResponse();
+            this.aiResponseContent.innerHTML = `
+                <div class="empty-state">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/>
+                    </svg>
+                    <p>No AI analysis available</p>
+                </div>
+            `;
         }
-    }
-
-    showAIResponse(text) {
-        this.aiResponseContent.textContent = text;
-        this.aiResponseContainer.style.display = 'block';
-    }
-
-    hideAIResponse() {
-        this.aiResponseContainer.style.display = 'none';
-        this.aiResponseContent.textContent = '';
     }
 
     clearConversationLog() {
@@ -279,7 +300,14 @@ class ScrumBuilder {
                 <p>No active meeting analysis</p>
             </div>
         `;
-        this.hideAIResponse();
+        this.aiResponseContent.innerHTML = `
+            <div class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/>
+                </svg>
+                <p>No AI analysis available</p>
+            </div>
+        `;
     }
 
     normalizeMeetId(meetId) {
@@ -308,6 +336,14 @@ class ScrumBuilder {
 
     async breakMaster() {
         return this.apiRequest('POST', '/leave');
+    }
+
+    startAIStatusUpdates() {
+        this.checkAIStatus();
+        this.aiStatusInterval = setInterval(
+            () => this.checkAIStatus(),
+            30000
+        );
     }
 }
 
