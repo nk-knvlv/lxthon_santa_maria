@@ -244,7 +244,7 @@ class ScrumBuilder {
         try {
             const [conversation, aiResponse] = await Promise.all([
                 this.apiRequest('GET', '/dialog'),
-                this.apiRequest('POST', '/ai-response', { conversation: [] })
+                this.apiRequest('GET', '/ai-response')
             ]);
 
             this.updateUI(conversation, aiResponse);
